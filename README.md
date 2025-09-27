@@ -1,62 +1,200 @@
-Aquí tienes una lista de fases para realizar el proyecto desde cero:
+# Microservicio de Gestión de Pedidos
 
-1. **Fase de Planificación:**
+Este microservicio gestiona la creación, consulta y actualización de pedidos realizados por los usuarios, así como el historial de estos pedidos. Está basado en Node.js, Express, y MongoDB.
 
-   * Definir requisitos funcionales y no funcionales.
-   * Planificar estructura de las colecciones y relaciones entre ellas.
-   * Definir endpoints necesarios.
-   * Establecer herramientas y tecnologías (Node.js, TypeScript, MongoDB).
+## Descripción
 
-2. **Fase de Configuración del Entorno:**
+Este microservicio permite:
 
-   * Configurar el entorno de desarrollo (Node.js, TypeScript, MongoDB).
-   * Instalar dependencias iniciales (Express, Mongoose, CORS, etc.).
-   * Configurar el proyecto con TypeScript y estructura de carpetas.
+* Crear un nuevo pedido.
+* Consultar los pedidos de un usuario.
+* Obtener detalles de un pedido específico.
+* Actualizar el estado de un pedido.
+* Registrar cambios en el historial de pedidos.
 
-3. **Fase de Diseño de la Base de Datos:**
+Utiliza una base de datos **MongoDB** para almacenar los pedidos y su historial.
 
-   * Crear las colecciones de MongoDB (Pedidos, Historial de Pedidos).
-   * Definir esquemas de Mongoose para cada colección.
+## Endpoints
 
-4. **Fase de Desarrollo de la Lógica del Backend:**
+### Pedidos
 
-   * Implementar las rutas y controladores CRUD para pedidos y historial de pedidos.
-   * Establecer la lógica para manejar relaciones entre pedidos y productos.
-   * Implementar la lógica de estado de los pedidos.
+1. **Obtener todos los pedidos de un usuario**
 
-5. **Fase de Integración de MongoDB:**
+   * **Endpoint:** `GET /pedidos/{id_usuario}`
+   * **Descripción:** Recupera todos los pedidos de un usuario específico.
+   * **Parámetros:**
 
-   * Conectar la aplicación con la base de datos MongoDB.
-   * Implementar funciones para agregar, actualizar, eliminar y consultar documentos.
+     * `id_usuario` (URL): ID del usuario.
+   * **Respuesta:**
 
-6. **Fase de Implementación de CORS:**
+     * Código: 200 OK
+     * Cuerpo: Lista de pedidos.
 
-   * Configurar CORS para permitir solicitudes desde diferentes orígenes.
+2. **Obtener detalles de un pedido específico**
 
-7. **Fase de Implementación de Swagger para Documentación:**
+   * **Endpoint:** `GET /pedidos/{id_pedido}`
+   * **Descripción:** Recupera los detalles de un pedido por su ID.
+   * **Parámetros:**
 
-   * Integrar Swagger con la aplicación para generar documentación de los endpoints.
-   * Configurar la documentación de cada endpoint (métodos, parámetros, respuestas).
+     * `id_pedido` (URL): ID del pedido.
+   * **Respuesta:**
 
-8. **Fase de Pruebas Unitarias y de Integración:**
+     * Código: 200 OK
+     * Cuerpo: Detalles del pedido.
 
-   * Escribir pruebas unitarias para las funciones de controladores y servicios.
-   * Probar la integración con MongoDB y la funcionalidad completa de los endpoints.
+3. **Crear un nuevo pedido**
 
-9. **Fase de Validación y Control de Errores:**
+   * **Endpoint:** `POST /pedidos`
+   * **Descripción:** Crea un nuevo pedido.
+   * **Cuerpo:**
 
-   * Asegurar que se manejen adecuadamente los errores (como errores de validación o de conexión a la base de datos).
-   * Validar la entrada de datos (como parámetros en los cuerpos de las peticiones).
+     ```json
+     {
+       "id_usuario": 123,
+       "productos": [
+         { "id_producto": 1, "cantidad": 2, "precio_unitario": 10.0 },
+         { "id_producto": 2, "cantidad": 1, "precio_unitario": 20.0 }
+       ],
+       "total": 40.0
+     }
+     ```
+   * **Respuesta:**
 
-10. **Fase de Despliegue:**
+     * Código: 201 Created
+     * Cuerpo: Detalles del pedido creado.
 
-    * Configurar el entorno de producción (servidor, base de datos).
-    * Desplegar la aplicación en un entorno de producción (por ejemplo, en un servidor o plataforma en la nube).
+4. **Actualizar el estado o detalles de un pedido**
 
-11. **Fase de Mantenimiento:**
+   * **Endpoint:** `PUT /pedidos/{id_pedido}`
+   * **Descripción:** Actualiza el estado o los detalles de un pedido.
+   * **Parámetros:**
 
-    * Monitorear el funcionamiento de la API.
-    * Realizar actualizaciones y correcciones de errores según sea necesario.
+     * `id_pedido` (URL): ID del pedido a actualizar.
+   * **Cuerpo:**
 
-Esta es la lista de fases generales para llevar a cabo el proyecto desde su inicio hasta el final.
+     ```json
+     {
+       "estado": "entregado"
+     }
+     ```
+   * **Respuesta:**
 
+     * Código: 200 OK
+     * Cuerpo: Detalles del pedido actualizado.
+
+5. **Eliminar un pedido**
+
+   * **Endpoint:** `DELETE /pedidos/{id_pedido}`
+   * **Descripción:** Elimina un pedido por su ID.
+   * **Parámetros:**
+
+     * `id_pedido` (URL): ID del pedido a eliminar.
+   * **Respuesta:**
+
+     * Código: 200 OK
+     * Cuerpo: Confirmación de eliminación.
+
+### Historial de Pedidos
+
+1. **Obtener el historial de pedidos de un usuario**
+
+   * **Endpoint:** `GET /historial/{id_usuario}`
+   * **Descripción:** Recupera el historial de pedidos de un usuario específico.
+   * **Parámetros:**
+
+     * `id_usuario` (URL): ID del usuario.
+   * **Respuesta:**
+
+     * Código: 200 OK
+     * Cuerpo: Lista del historial de pedidos.
+
+2. **Registrar un cambio en el historial de un pedido**
+
+   * **Endpoint:** `POST /historial`
+   * **Descripción:** Registra un cambio de estado o entrega en el historial de un pedido.
+   * **Cuerpo:**
+
+     ```json
+     {
+       "id_pedido": "60c72b1f9e7b1f6d4e4a9e1f",
+       "fecha_entrega": "2025-09-27T10:00:00Z",
+       "estado": "entregado",
+       "comentarios": "Pedido entregado a domicilio"
+     }
+     ```
+   * **Respuesta:**
+
+     * Código: 201 Created
+     * Cuerpo: Detalles del historial registrado.
+
+## Instalación
+
+Para instalar y ejecutar este microservicio, sigue estos pasos:
+
+1. **Clona el repositorio:**
+
+   ```bash
+   git clone <url-del-repositorio>
+   cd <nombre-del-repositorio>
+   ```
+
+2. **Instala las dependencias:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Configura las variables de entorno:**
+
+   Asegúrate de tener un archivo `.env` configurado correctamente con las siguientes variables:
+
+   ```env
+   MONGO_URI=mongodb://localhost:27017/pedidos
+   PORT=3000
+   ```
+
+4. **Inicia el servidor:**
+
+   ```bash
+   npm start
+   ```
+
+   El microservicio estará disponible en `http://localhost:3000`.
+
+## Estructura del Proyecto
+
+```
+/src
+  /controllers
+    PedidoController.ts
+    HistorialController.ts
+  /models
+    Pedido.ts
+    HistorialPedido.ts
+  /routes
+    pedidoRoutes.ts
+    historialRoutes.ts
+  /middleware
+    error.ts
+  index.ts
+  swagger.ts
+  tsconfig.json
+```
+
+## Dependencias
+
+* `express`: Framework web para Node.js.
+* `mongoose`: ODM para interactuar con MongoDB.
+* `axios`: Para realizar solicitudes HTTP.
+* `dotenv`: Para manejar variables de entorno.
+* `cors`: Para manejar las solicitudes de recursos cruzados.
+
+## Contribuciones
+
+Si deseas contribuir al proyecto, por favor sigue estos pasos:
+
+1. Haz un fork del repositorio.
+2. Crea una nueva rama (`git checkout -b feature/mi-nueva-funcionalidad`).
+3. Realiza tus cambios y haz un commit (`git commit -am 'Agrega mi nueva funcionalidad'`).
+4. Haz push a la rama (`git push origin feature/mi-nueva-funcionalidad`).
+5. Abre un Pull Request.
