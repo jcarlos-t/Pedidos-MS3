@@ -3,9 +3,10 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pedidoRoutes from './routes/pedidoRoutes';
+import historialRoutes from './routes/historialRoutes';  // Importar las rutas de historial
 import { errorMiddleware } from './middleware/error';
+import swaggerDocs from './swagger';  // Importar la configuración de Swagger
 
-// Cargar las variables de entorno desde el archivo .env
 dotenv.config();
 
 // Configurar el servidor
@@ -33,8 +34,14 @@ mongoose.connect(mongoUri)
 // Usar las rutas de Pedidos
 app.use('/api', pedidoRoutes);
 
+// Usar las rutas de Historial
+app.use('/api', historialRoutes);  // Registrar las rutas de historial en el mismo prefijo '/api'
+
 // Usar el middleware de manejo de errores
 app.use(errorMiddleware);
+
+// Llamar a la función swaggerDocs para integrar Swagger
+swaggerDocs(app);
 
 // Iniciar el servidor
 app.listen(port, () => {

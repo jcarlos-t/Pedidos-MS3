@@ -41,4 +41,3 @@ class HistorialController {
 }
 
 export default HistorialController;  // Solo una exportación default
-
