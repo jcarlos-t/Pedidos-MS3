@@ -1,0 +1,37 @@
+# Node.js
+node_modules/
+
+# Compiled output
+dist/
+
+# TypeScript
+*.tsbuildinfo
+
+# MongoDB data (si estás usando base de datos local y no Docker)
+data/
+
+# Logs
+*.log
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# dotenv environment variables file
+.env
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Typescript build files
+*.d.ts
+
+# NPM package-lock file (optional, but often used in many projects)
+package-lock.json
+

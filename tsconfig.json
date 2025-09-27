@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    // Archivo de salida y raíz del proyecto
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Configuración del módulo y el objetivo
+    "module": "commonjs", 
+    "target": "ES6", 
+
+    // Definir tipos para Node.js
+    "types": ["node"],
+
+    // Generar source maps y declaraciones de tipo
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Opciones estrictas para un chequeo de tipos más robusto
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Otras configuraciones recomendadas
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Opciones para módulos de ES
+    "moduleResolution": "node",
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+
