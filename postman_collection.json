@@ -1,0 +1,168 @@
+{
+  "info": {
+    "_postman_id": "b2b92e2a-8a7c-4a6f-9b93-69ab9a2e28b6",
+    "name": "Pedidos Microservicio",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "Obtener todos los pedidos de un usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3003/api/pedidos/:id_usuario",
+              "host": ["http://localhost:3003"],
+              "path": ["api", "pedidos", ":id_usuario"],
+              "variable": [
+                {
+                  "key": "id_usuario",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener detalles de un pedido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3003/api/pedidos/detalles/:id_pedido",
+              "host": ["http://localhost:3003"],
+              "path": ["api", "pedidos", "detalles", ":id_pedido"],
+              "variable": [
+                {
+                  "key": "id_pedido",
+                  "value": "60d5f7e3b5f7f4c10c88b555"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear un nuevo pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id_usuario\":1,\"productos\":[{\"id_producto\":2,\"cantidad\":3,\"precio_unitario\":10.5}],\"total\":31.5}"
+            },
+            "url": {
+              "raw": "http://localhost:3003/api/pedidos",
+              "host": ["http://localhost:3003"],
+              "path": ["api", "pedidos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar un pedido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"estado\":\"entregado\",\"productos\":[{\"id_producto\":2,\"cantidad\":3,\"precio_unitario\":10.5}],\"total\":31.5}"
+            },
+            "url": {
+              "raw": "http://localhost:3003/api/pedidos/:id_pedido",
+              "host": ["http://localhost:3003"],
+              "path": ["api", "pedidos", ":id_pedido"],
+              "variable": [
+                {
+                  "key": "id_pedido",
+                  "value": "60d5f7e3b5f7f4c10c88b555"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar un pedido",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3003/api/pedidos/:id_pedido",
+              "host": ["http://localhost:3003"],
+              "path": ["api", "pedidos", ":id_pedido"],
+              "variable": [
+                {
+                  "key": "id_pedido",
+                  "value": "60d5f7e3b5f7f4c10c88b555"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Historial de Pedidos",
+      "item": [
+        {
+          "name": "Obtener historial de pedidos de un usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3003/api/historial/:id_usuario",
+              "host": ["http://localhost:3003"],
+              "path": ["api", "historial", ":id_usuario"],
+              "variable": [
+                {
+                  "key": "id_usuario",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar un cambio de estado en el historial",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id_pedido\":\"60d5f7e3b5f7f4c10c88b555\",\"fecha_entrega\":\"2025-09-28T12:00:00Z\",\"estado\":\"entregado\",\"comentarios\":\"Pedido entregado con éxito\"}"
+            },
+            "url": {
+              "raw": "http://localhost:3003/api/historial",
+              "host": ["http://localhost:3003"],
+              "path": ["api", "historial"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
+

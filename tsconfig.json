@@ -1,40 +1,27 @@
 {
   "compilerOptions": {
-    // Archivo de salida y raíz del proyecto
-    "rootDir": "./src",
-    "outDir": "./dist",
-
-    // Configuración del módulo y el objetivo
-    "module": "commonjs", 
-    "target": "ES6", 
-
-    // Definir tipos para Node.js
-    "types": ["node"],
-
-    // Generar source maps y declaraciones de tipo
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    // Opciones estrictas para un chequeo de tipos más robusto
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // Otras configuraciones recomendadas
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-
-    // Opciones para módulos de ES
-    "moduleResolution": "node",
-    "resolveJsonModule": true
+    "rootDir": "./src",             // Definir el directorio de origen
+    "outDir": "./dist",             // Definir el directorio de salida
+    "module": "commonjs",           // Usamos commonjs para la compatibilidad con Node.js
+    "target": "ES6",                // Usamos ES6 como objetivo de compilación
+    "types": ["node"],              // Incluir los tipos de Node.js
+    "sourceMap": true,              // Generar archivos source map
+    "declaration": true,            // Generar archivos de declaración (.d.ts)
+    "declarationMap": true,         // Generar mapas de declaración
+    "strict": true,                 // Activar todas las comprobaciones estrictas
+    "noUncheckedIndexedAccess": true, // Activar el chequeo estricto para índices no comprobados
+    "exactOptionalPropertyTypes": true, // Exactitud en las propiedades opcionales
+    "skipLibCheck": true,           // Ignorar chequeos de las librerías
+    "esModuleInterop": true,        // Permitir importaciones de ESModules
+    "forceConsistentCasingInFileNames": true, // Forzar consistencia en los nombres de archivos
+    "moduleResolution": "node",     // Resolución de módulos al estilo de Node.js
+    "resolveJsonModule": true       // Permitir la importación de módulos JSON
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts"                   // Incluir todos los archivos TypeScript dentro de src
   ],
   "exclude": [
-    "node_modules"
+    "node_modules"                  // Excluir la carpeta node_modules
   ]
 }
 

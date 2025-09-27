@@ -1,0 +1,13 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongodb
+    ports:
+      - "27017:27017"  # Mapeamos el puerto 27017 del contenedor al puerto 27017 de la máquina host
+    volumes:
+      - mongo-data:/data/db  # Volumen para persistencia de datos
+
+volumes:
+  mongo-data:
+
