@@ -6,7 +6,7 @@ const router = Router();
 
 /**
  * @swagger
- * /pedidos/{id_usuario}:
+ * /pedidos/user/{id_usuario}:
  *   get:
  *     summary: Obtener todos los pedidos de un usuario (con filtros opcionales)
  *     parameters:
@@ -16,29 +16,39 @@ const router = Router();
  *         description: ID del usuario para obtener sus pedidos
  *         schema:
  *           type: integer
+ *       - in: query
+ *         name: estado
+ *         required: false
+ *         description: Filtrar pedidos por estado (pendiente, entregado, cancelado)
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Lista de pedidos del usuario
+ *       400:
+ *         description: ID de usuario inválido
  *       500:
  *         description: Error al obtener los pedidos
  */
-router.get("/pedidos/:id_usuario", PedidoController.obtenerPedidosPorUsuario);
+router.get("/pedidos/user/:id_usuario", PedidoController.obtenerPedidosPorUsuario);
 
 /**
  * @swagger
  * /pedidos/{id_pedido}:
  *   get:
- *     summary: Obtener detalles de un pedido específico
+ *     summary: Obtener un pedido por su ID (ObjectId de MongoDB)
  *     parameters:
  *       - in: path
  *         name: id_pedido
  *         required: true
- *         description: ID del pedido para obtener sus detalles
+ *         description: ID del pedido (ObjectId de MongoDB)
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Detalles del pedido
+ *         description: Pedido encontrado
+ *       400:
+ *         description: ID de pedido inválido
  *       404:
  *         description: Pedido no encontrado
  *       500:

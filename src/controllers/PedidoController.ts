@@ -3,6 +3,7 @@ import axios from "axios";
 import Pedido from "../models/Pedido";  // Modelo de Pedido
 import HistorialPedido from "../models/HistorialPedido"; // Modelo de Historial de Pedido
 import dotenv from 'dotenv';
+import mongoose from "mongoose"; 
 
 // Cargar las variables de entorno desde el archivo .env
 dotenv.config();
@@ -156,33 +157,53 @@ export const crearPedido = async (req: Request, res: Response) => {
 
 // GET: Obtener todos los pedidos de un usuario
 export const obtenerPedidosPorUsuario = async (req: Request, res: Response) => {
-    try {
-        const { id_usuario } = req.params;
-        if (!id_usuario) {
-            return res.status(400).json({ error: "ID de usuario requerido" });
-        }
-        const pedidos = await Pedido.find({ id_usuario: parseInt(id_usuario) });
-        return res.status(200).json(pedidos);
-    } catch (error) {
-        console.error('Error al obtener los pedidos:', error instanceof Error ? error.message : String(error));
-        return res.status(500).json({ error: "Error al obtener los pedidos" });
+  try {
+    const { id_usuario } = req.params;
+
+    const idNum = Number(id_usuario);
+    if (!Number.isInteger(idNum) || idNum <= 0) {
+      return res.status(400).json({ error: "ID de usuario inválido" });
     }
+
+    const { estado } = req.query as { estado?: string };
+    const filtro: any = { id_usuario: idNum };
+    if (estado) filtro.estado = estado;
+
+    const pedidos = await Pedido.find(filtro);
+    return res.status(200).json(pedidos);
+  } catch (error) {
+    console.error(
+      "Error al obtener los pedidos:",
+      error instanceof Error ? error.message : String(error)
+    );
+    return res.status(500).json({ error: "Error al obtener los pedidos" });
+  }
 };
+
 
 // GET: Obtener un pedido específico
 export const obtenerPedidoPorId = async (req: Request, res: Response) => {
-    try {
-        const { id_pedido } = req.params;
-        const pedido = await Pedido.findById(id_pedido);
-        if (!pedido) {
-            return res.status(404).json({ error: "Pedido no encontrado" });
-        }
-        return res.status(200).json(pedido);
-    } catch (error) {
-        console.error('Error al obtener el pedido:', error instanceof Error ? error.message : String(error));
-        return res.status(500).json({ error: "Error al obtener el pedido" });
+  try {
+    const { id_pedido } = req.params;
+
+    if (!mongoose.isValidObjectId(id_pedido)) {
+      return res.status(400).json({ error: "ID de pedido inválido" });
     }
+
+    const pedido = await Pedido.findById(id_pedido);
+    if (!pedido) {
+      return res.status(404).json({ error: "Pedido no encontrado" });
+    }
+    return res.status(200).json(pedido);
+  } catch (error) {
+    console.error(
+      "Error al obtener el pedido:",
+      error instanceof Error ? error.message : String(error)
+    );
+    return res.status(500).json({ error: "Error al obtener el pedido" });
+  }
 };
+
 
 // PUT: Actualizar solo el estado del pedido
 export const actualizarEstadoPedido = async (req: Request, res: Response) => {

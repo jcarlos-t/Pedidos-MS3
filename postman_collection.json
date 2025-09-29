@@ -29,39 +29,35 @@
         {
           "listen": "test",
           "script": {
+            "type": "text/javascript",
             "exec": [
-              "if (pm.response.code === 201) {",
-              "    const response = pm.response.json();",
-              "    if (response.pedido && response.pedido._id) {",
-              "        pm.collectionVariables.set('id_pedido', response.pedido._id);",
-              "        console.log('ID del pedido guardado:', response.pedido._id);",
-              "    }",
+              "if (pm.response.code === 201 || pm.response.code === 200) {",
+              "  const res = pm.response.json();",
+              "  const id = (res && res.pedido && res.pedido._id) ? res.pedido._id : (res && res._id ? res._id : null);",
+              "  if (id) {",
+              "    pm.collectionVariables.set('id_pedido', id);",
+              "    console.log('ID del pedido guardado:', id);",
+              "  } else {",
+              "    console.warn('No se encontró _id del pedido en la respuesta');",
+              "  }",
               "}"
-            ],
-            "type": "text/javascript"
+            ]
           }
         }
       ],
       "request": {
         "method": "POST",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"id_usuario\": {{id_usuario}},\n  \"productos\": [\n    {\n      \"id_producto\": 101,\n      \"cantidad\": 2,\n      \"precio_unitario\": 15.50\n    },\n    {\n      \"id_producto\": 102,\n      \"cantidad\": 1,\n      \"precio_unitario\": 25.00\n    }\n  ],\n  \"total\": 56.00\n}"
+          "raw": "{\n  \"id_usuario\": {{id_usuario}},\n  \"productos\": [\n    { \"id_producto\": 101, \"cantidad\": 2, \"precio_unitario\": 15.50 },\n    { \"id_producto\": 102, \"cantidad\": 1, \"precio_unitario\": 25.00 }\n  ],\n  \"total\": 56.00\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/pedidos",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "pedidos"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos"]
         },
         "description": "Crear un nuevo pedido. Valida que el usuario y productos existan en los microservicios MS1 y MS2."
       },
@@ -73,16 +69,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pedidos/{{id_usuario}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "pedidos",
-            "{{id_usuario}}"
-          ]
+          "raw": "{{baseUrl}}/pedidos/user/{{id_usuario}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "user", "{{id_usuario}}"]
         },
-        "description": "Obtener todos los pedidos de un usuario específico."
+        "description": "Obtener todos los pedidos de un usuario específico. Puedes añadir ?estado=pendiente|entregado|cancelado si tu API lo soporta."
       },
       "response": []
     },
@@ -93,16 +84,10 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/pedidos/{{id_pedido}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "",
-            "pedidos",
-            "{{id_pedido}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "{{id_pedido}}"]
         },
-        "description": "Obtener detalles de un pedido específico por su ID."
+        "description": "Obtener detalles de un pedido específico por su ID (ObjectId de MongoDB)."
       },
       "response": []
     },
@@ -111,10 +96,7 @@
       "request": {
         "method": "PUT",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
           "mode": "raw",
@@ -122,15 +104,8 @@
         },
         "url": {
           "raw": "{{baseUrl}}/pedidos/{{id_pedido}}/estado",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "",
-            "pedidos",
-            "{{id_pedido}}",
-            "estado"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "{{id_pedido}}", "estado"]
         },
         "description": "Actualizar solo el estado de un pedido. Estados válidos: pendiente, entregado, cancelado."
       },
@@ -141,25 +116,16 @@
       "request": {
         "method": "PUT",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"productos\": [\n    {\n      \"id_producto\": 101,\n      \"cantidad\": 3,\n      \"precio_unitario\": 15.50\n    },\n    {\n      \"id_producto\": 103,\n      \"cantidad\": 1,\n      \"precio_unitario\": 30.00\n    }\n  ],\n  \"total\": 76.50\n}"
+          "raw": "{\n  \"productos\": [\n    { \"id_producto\": 101, \"cantidad\": 3, \"precio_unitario\": 15.50 },\n    { \"id_producto\": 103, \"cantidad\": 1, \"precio_unitario\": 30.00 }\n  ],\n  \"total\": 76.50\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/pedidos/{{id_pedido}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "",
-            "pedidos",
-            "{{id_pedido}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "{{id_pedido}}"]
         },
         "description": "Actualizar productos y total de un pedido. Valida que los productos existan en MS2."
       },
@@ -172,16 +138,10 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/pedidos/{{id_pedido}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "",
-            "pedidos",
-            "{{id_pedido}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "{{id_pedido}}"]
         },
-        "description": "Cancelar un pedido (cambia el estado a 'cancelado' en lugar de eliminarlo)."
+        "description": "Cancelar un pedido (p. ej., cambiar el estado a 'cancelado')."
       },
       "response": []
     },
@@ -192,16 +152,10 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/historial/{{id_usuario}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "",
-            "historial",
-            "{{id_usuario}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["historial", "{{id_usuario}}"]
         },
-        "description": "Obtener historial de pedidos de un usuario. Incluye filtros opcionales por estado."
+        "description": "Obtener historial de pedidos de un usuario. Incluye filtros opcionales por estado (?estado=...)."
       },
       "response": []
     },
@@ -212,20 +166,10 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/historial/{{id_usuario}}?estado=entregado",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "",
-            "historial",
-            "{{id_usuario}}"
-          ],
+          "host": ["{{baseUrl}}"],
+          "path": ["historial", "{{id_usuario}}"],
           "query": [
-            {
-              "key": "estado",
-              "value": "entregado",
-              "description": "Filtrar por estado: pendiente, entregado, cancelado"
-            }
+            { "key": "estado", "value": "entregado", "description": "Filtrar por estado: pendiente, entregado, cancelado" }
           ]
         },
         "description": "Obtener historial de pedidos de un usuario filtrado por estado específico."
@@ -237,10 +181,7 @@
       "request": {
         "method": "POST",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
           "mode": "raw",
@@ -248,15 +189,8 @@
         },
         "url": {
           "raw": "{{baseUrl}}/pedidos/{{id_pedido}}/historial",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "",
-            "pedidos",
-            "{{id_pedido}}",
-            "historial"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "{{id_pedido}}", "historial"]
         },
         "description": "Registrar un cambio de estado o evento en el historial de un pedido específico."
       },
@@ -267,10 +201,7 @@
       "request": {
         "method": "POST",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
           "mode": "raw",
@@ -278,15 +209,8 @@
         },
         "url": {
           "raw": "{{baseUrl}}/pedidos/{{id_pedido}}/historial",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "",
-            "pedidos",
-            "{{id_pedido}}",
-            "historial"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "{{id_pedido}}", "historial"]
         },
         "description": "Registrar historial con fecha de evento personalizada."
       },
