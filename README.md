@@ -198,3 +198,49 @@ Si deseas contribuir al proyecto, por favor sigue estos pasos:
 3. Realiza tus cambios y haz un commit (`git commit -am 'Agrega mi nueva funcionalidad'`).
 4. Haz push a la rama (`git push origin feature/mi-nueva-funcionalidad`).
 5. Abre un Pull Request.
+
+
+Esquema de la colección "Pedidos":
+{
+  "_id": "ObjectId",               // ID único del pedido, generado por MongoDB
+  "id_usuario": "INT",             // ID del usuario que hizo el pedido (referencia a la tabla de Usuarios)
+  "fecha_pedido": "ISODate",       // Fecha en que se realizó el pedido
+  "estado": "STRING",              // Estado del pedido (ejemplo: "pendiente", "entregado", "cancelado")
+  "total": "DECIMAL(10, 2)",       // Total del pedido (suma de los productos y otros cargos)
+  "productos": [                   // Array de productos en el pedido
+    {
+      "id_producto": "INT",         // ID del producto (referencia a la tabla de Productos)
+      "cantidad": "INT",            // Cantidad del producto en el pedido
+      "precio_unitario": "DECIMAL(10, 2)"  // Precio por unidad del producto
+    }
+  ]
+}
+
+
+Esquema de la colección "Historial de Pedidos":
+{
+  "_id": "ObjectId",              // ID único del historial de cambios, generado por MongoDB
+  "id_pedido": "ObjectId",         // Referencia al ID del pedido (relación con la colección de Pedidos)
+  "fecha_evento": "ISODate",      // Fecha de entrega, si aplica (o la fecha relevante del evento)
+  "estado": "STRING",              // El estado del pedido en ese momento (ejemplo: "entregado", "cancelado")
+  "comentarios": "TEXT"            // Comentarios o notas sobre el estado o la situación del pedido
+}
+
+
+Pedidos:
+
+GET /pedidos/{id_usuario}: Obtener todos los pedidos de un usuario (con filtros opcionales).
+
+GET /pedidos/{id_pedido}: Obtener detalles de un pedido específico.
+
+POST /pedidos: Crear un nuevo pedido.
+
+PUT /pedidos/{id_pedido}/estado: Actualizar solo el estado del pedido.
+
+DELETE /pedidos/{id_pedido}: Cancelar o eliminar un pedido (con validaciones).
+
+Historial de Pedidos:
+
+GET /historial/{id_usuario}: Obtener historial de pedidos de un usuario (con filtros opcionales).
+
+POST /pedidos/{id_pedido}/historial: Registrar un cambio de estado o entrega en el historial de un pedido.

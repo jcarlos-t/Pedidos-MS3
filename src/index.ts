@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import pedidoRoutes from './routes/pedidoRoutes';
 import historialRoutes from './routes/historialRoutes';  // Importar las rutas de historial
 import { errorMiddleware } from './middleware/error';
+import { requestLogger, errorLogger } from './middleware/logger';  // Importar middleware de logging
 import swaggerDocs from './swagger';  // Importar la configuración de Swagger
 
 dotenv.config();
@@ -21,6 +22,9 @@ app.use(cors({ origin: corsOrigin }));
 // Configuración para recibir JSON en las solicitudes
 app.use(express.json());
 
+// Middleware de logging
+app.use(requestLogger);
+
 // Conectar a MongoDB
 mongoose.connect(mongoUri)
   .then(() => {
@@ -32,10 +36,13 @@ mongoose.connect(mongoUri)
   });
 
 // Usar las rutas de Pedidos
-app.use('/api', pedidoRoutes);
+app.use('/', pedidoRoutes);
 
 // Usar las rutas de Historial
-app.use('/api', historialRoutes);  // Registrar las rutas de historial en el mismo prefijo '/api'
+app.use('/', historialRoutes);
+
+// Usar el middleware de logging de errores
+app.use(errorLogger);
 
 // Usar el middleware de manejo de errores
 app.use(errorMiddleware);

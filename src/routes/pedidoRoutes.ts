@@ -8,14 +8,14 @@ const router = Router();
  * @swagger
  * /pedidos/{id_usuario}:
  *   get:
- *     summary: Obtener todos los pedidos de un usuario
+ *     summary: Obtener todos los pedidos de un usuario (con filtros opcionales)
  *     parameters:
  *       - in: path
  *         name: id_usuario
  *         required: true
  *         description: ID del usuario para obtener sus pedidos
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Lista de pedidos del usuario
@@ -26,7 +26,7 @@ router.get("/pedidos/:id_usuario", PedidoController.obtenerPedidosPorUsuario);
 
 /**
  * @swagger
- * /pedidos/detalles/{id_pedido}:
+ * /pedidos/{id_pedido}:
  *   get:
  *     summary: Obtener detalles de un pedido específico
  *     parameters:
@@ -44,7 +44,7 @@ router.get("/pedidos/:id_usuario", PedidoController.obtenerPedidosPorUsuario);
  *       500:
  *         description: Error al obtener el pedido
  */
-router.get("/pedidos/detalles/:id_pedido", PedidoController.obtenerPedidoPorId);
+router.get("/pedidos/:id_pedido", PedidoController.obtenerPedidoPorId);
 
 /**
  * @swagger
@@ -59,22 +59,28 @@ router.get("/pedidos/detalles/:id_pedido", PedidoController.obtenerPedidoPorId);
  *             type: object
  *             properties:
  *               id_usuario:
- *                 type: string
+ *                 type: integer
  *               productos:
  *                 type: array
  *                 items:
  *                   type: object
  *                   properties:
  *                     id_producto:
- *                       type: string
+ *                       type: integer
  *                     cantidad:
  *                       type: integer
+ *                     precio_unitario:
+ *                       type: number
  *               total:
  *                 type: number
  *                 format: float
  *     responses:
  *       201:
  *         description: Pedido creado exitosamente
+ *       400:
+ *         description: Datos inválidos
+ *       404:
+ *         description: Usuario o productos no encontrados
  *       500:
  *         description: Error al crear el pedido
  */
@@ -82,9 +88,9 @@ router.post("/pedidos", PedidoController.crearPedido);
 
 /**
  * @swagger
- * /pedidos/{id_pedido}:
+ * /pedidos/{id_pedido}/estado:
  *   put:
- *     summary: Actualizar un pedido
+ *     summary: Actualizar solo el estado del pedido
  *     parameters:
  *       - in: path
  *         name: id_pedido
@@ -98,11 +104,62 @@ router.post("/pedidos", PedidoController.crearPedido);
  *         application/json:
  *           schema:
  *             type: object
+ *             properties:
+ *               estado:
+ *                 type: string
+ *                 enum: [pendiente, entregado, cancelado]
+ *     responses:
+ *       200:
+ *         description: Estado del pedido actualizado exitosamente
+ *       400:
+ *         description: Estado inválido
+ *       404:
+ *         description: Pedido no encontrado
+ *       500:
+ *         description: Error al actualizar el estado del pedido
+ */
+router.put("/pedidos/:id_pedido/estado", PedidoController.actualizarEstadoPedido);
+
+/**
+ * @swagger
+ * /pedidos/{id_pedido}:
+ *   put:
+ *     summary: Actualizar detalles y otros parámetros del pedido
+ *     parameters:
+ *       - in: path
+ *         name: id_pedido
+ *         required: true
+ *         description: ID del pedido a actualizar
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               productos:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id_producto:
+ *                       type: integer
+ *                     cantidad:
+ *                       type: integer
+ *                     precio_unitario:
+ *                       type: number
+ *               total:
+ *                 type: number
+ *                 format: float
  *     responses:
  *       200:
  *         description: Pedido actualizado exitosamente
+ *       400:
+ *         description: Datos inválidos
  *       404:
- *         description: Pedido no encontrado
+ *         description: Pedido o productos no encontrados
  *       500:
  *         description: Error al actualizar el pedido
  */
@@ -112,21 +169,21 @@ router.put("/pedidos/:id_pedido", PedidoController.actualizarPedido);
  * @swagger
  * /pedidos/{id_pedido}:
  *   delete:
- *     summary: Eliminar un pedido
+ *     summary: Cancelar o eliminar un pedido
  *     parameters:
  *       - in: path
  *         name: id_pedido
  *         required: true
- *         description: ID del pedido a eliminar
+ *         description: ID del pedido a cancelar
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Pedido eliminado exitosamente
+ *         description: Pedido cancelado exitosamente
  *       404:
  *         description: Pedido no encontrado
  *       500:
- *         description: Error al eliminar el pedido
+ *         description: Error al cancelar el pedido
  */
 router.delete("/pedidos/:id_pedido", PedidoController.eliminarPedido);
 
