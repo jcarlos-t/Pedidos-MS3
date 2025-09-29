@@ -7,18 +7,16 @@ import dotenv from 'dotenv';
 // Cargar las variables de entorno desde el archivo .env
 dotenv.config();
 
-// Ahora puedes acceder a las variables de entorno con process.env
-const MS1_BASE_URL = process.env.MS1_BASE_URL || 'http://localhost:3001'; // URL de MS1
-const MS2_BASE_URL = process.env.MS2_BASE_URL || 'http://localhost:3002'; // URL de MS2
+const MS1_USUARIOS_API_URL = process.env.MS1_USUARIOS_API_URL || 'http://localhost:3001'; // URL de MS1
+const MS2_PRODUCTOS_API_URL = process.env.MS2_PRODUCTOS_API_URL || 'http://localhost:3002'; // URL de MS2
 
 // POST: Crear un nuevo pedido
 export const crearPedido = async (req: Request, res: Response) => {
     try {
-        const { id_usuario, productos, total } = req.body;
+        const { id_usuario, productos, total, fecha_entrega } = req.body;
 
-        // Solo el POST /pedidos valida el usuario y los productos desde otros microservicios
         // Validación: Verificar que el usuario exista (Microservicio 1)
-        const usuario = await axios.get(`${MS1_BASE_URL}/usuarios/${id_usuario}`);
+        const usuario = await axios.get(`${MS1_USUARIOS_API_URL}/usuarios/${id_usuario}`);
         if (usuario.status !== 200) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
@@ -26,7 +24,7 @@ export const crearPedido = async (req: Request, res: Response) => {
         // Validación: Verificar que todos los productos existan (Microservicio 2)
         const productosInvalidos = [];
         for (let producto of productos) {
-            const respuesta = await axios.get(`${MS2_BASE_URL}/productos/${producto.id_producto}`);
+            const respuesta = await axios.get(`${MS2_PRODUCTOS_API_URL}/productos/${producto.id_producto}`);
             if (respuesta.status !== 200) {
                 productosInvalidos.push(producto.id_producto);
             }
@@ -47,10 +45,10 @@ export const crearPedido = async (req: Request, res: Response) => {
 
         await nuevoPedido.save();
 
-        // Registrar historial de pedido
+        // Registrar historial de pedido, usando la fecha de entrega de la solicitud o la fecha actual
         const historial = new HistorialPedido({
             id_pedido: nuevoPedido._id,
-            fecha_entrega: null,
+            fecha_entrega: fecha_entrega ? new Date(fecha_entrega) : new Date(), // Usar fecha proporcionada o la fecha actual
             estado: "pendiente",
             comentarios: "Pedido en proceso"
         });
@@ -112,4 +110,3 @@ export const eliminarPedido = async (req: Request, res: Response) => {
         return res.status(500).json({ error: "Error al eliminar el pedido" });
     }
 };
-

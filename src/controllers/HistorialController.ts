@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import HistorialPedido from '../models/HistorialPedido';  // Asegúrate de tener solo una importación
 
 class HistorialController {
-  
+
   // Obtener historial de pedidos de un usuario
   static async obtenerHistorialDeUsuario(req: Request, res: Response) {
     try {
@@ -20,14 +20,14 @@ class HistorialController {
       const { id_pedido, fecha_entrega, estado, comentarios } = req.body;
 
       // Verificar si el pedido existe, pero SOLO en la base de datos local
-      const pedidoExistente = await HistorialPedido.findById(id_pedido);  // Usar la base de datos local
+      const pedidoExistente = await HistorialPedido.findOne({ id_pedido });  // Usar la base de datos local para buscar por id_pedido
       if (!pedidoExistente) {
         return res.status(404).json({ message: 'Pedido no encontrado' });
       }
 
       const nuevoHistorial = new HistorialPedido({
         id_pedido,
-        fecha_entrega,
+        fecha_entrega: new Date(fecha_entrega), // Asegúrate de convertirlo a Date
         estado,
         comentarios,
       });
