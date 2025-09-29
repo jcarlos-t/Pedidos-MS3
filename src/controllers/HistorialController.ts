@@ -15,10 +15,17 @@ class HistorialController {
       }
 
       // Construir filtro para el historial directamente por id_usuario
-      const filtro: any = { id_usuario: parseInt(id_usuario) };
-      if (estado) {
-        filtro.estado = estado;
-      }
+const filtro: any = { id_usuario: parseInt(id_usuario) };
+if (estado) {
+  const estadosValidos = ["pendiente", "entregado", "cancelado"];
+  if (!estadosValidos.includes(estado as string)) {
+    return res.status(400).json({
+      error: "Estado inválido. Debe ser: pendiente, entregado o cancelado"
+    });
+  }
+  filtro.estado = estado;
+}
+
 
       // Buscar el historial directamente por id_usuario
       const historial = await HistorialPedido.find(filtro).populate('id_pedido');

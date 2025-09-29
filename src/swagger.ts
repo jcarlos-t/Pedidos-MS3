@@ -7,24 +7,66 @@ const swaggerUi = require("swagger-ui-express");
 // Definir las opciones de Swagger
 const options = {
   definition: {
-    openapi: "3.0.0", // Usamos la especificación OpenAPI 3
+    openapi: "3.0.0",
     info: {
       title: "API de Gestión de Pedidos",
       version: "1.0.0",
       description: "Documentación de la API para gestionar pedidos, usuarios y productos",
-      contact: {
-        name: "Dev1",
-        email: "dev1@cloud.com",
+      contact: { name: "Dev1", email: "dev1@cloud.com" },
+    },
+    servers: [{ url: "http://localhost:3003" }],
+    components: {
+      schemas: {
+        ProductoEnPedido: {
+          type: "object",
+          required: ["id_producto", "cantidad", "precio_unitario"],
+          properties: {
+            id_producto: { type: "integer", example: 101 },
+            cantidad: { type: "integer", example: 2 },
+            precio_unitario: { type: "number", example: 19.99 },
+          },
+        },
+        Pedido: {
+          type: "object",
+          properties: {
+            _id: { type: "string", example: "65200e3f9d4f2b5b5df8a111" },
+            id_usuario: { type: "integer", example: 14 },
+            fecha_pedido: { type: "string", format: "date-time" },
+            estado: { type: "string", enum: ["pendiente", "entregado", "cancelado"], example: "pendiente" },
+            total: { type: "number", example: 59.97 },
+            productos: { type: "array", items: { $ref: "#/components/schemas/ProductoEnPedido" } },
+          },
+        },
+        HistorialPedido: {
+          type: "object",
+          properties: {
+            _id: { type: "string", example: "65200e6a9d4f2b5b5df8a222" },
+            id_pedido: { type: "string", example: "65200e3f9d4f2b5b5df8a111" },
+            id_usuario: { type: "integer", example: 14 },
+            fecha_evento: { type: "string", format: "date-time" },
+            estado: { type: "string", enum: ["pendiente", "entregado", "cancelado"], example: "entregado" },
+            comentarios: { type: "string", example: "Pedido entregado al cliente" },
+          },
+        },
+        ErrorResponse: {
+          type: "object",
+          properties: {
+            error: { type: "string", example: "Estado inválido. Debe ser: pendiente, entregado o cancelado" },
+          },
+        },
+        MensajeRespuesta: {
+          type: "object",
+          properties: {
+            mensaje: { type: "string", example: "Operación realizada exitosamente" },
+          },
+        },
       },
     },
-    servers: [
-      {
-        url: "http://localhost:3003", // Cambia esto según tu entorno
-      },
-    ],
   },
-  apis: ["./src/routes/*.ts"], // Rutas donde Swagger buscará comentarios para documentar
+  // Incluye TS y JS para que funcione tanto con ts-node como con build a dist
+  apis: ["./src/routes/*.ts", "./dist/routes/*.js"],
 };
+
 
 // Crear la especificación Swagger
 const swaggerSpec = swaggerJSDoc(options);
