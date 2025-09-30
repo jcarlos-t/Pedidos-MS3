@@ -35,6 +35,16 @@ mongoose.connect(mongoUri)
     process.exit(1); // Salir si la conexión falla
   });
 
+
+// Endpoint de health check
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Backend funcionando',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Usar las rutas de Pedidos
 app.use('/', pedidoRoutes);
 

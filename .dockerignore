@@ -1,7 +1,12 @@
 node_modules
 dist
 *.log
-*.ts
-*.md
 .vscode
 .idea
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+*.md
+.env
+

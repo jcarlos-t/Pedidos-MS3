@@ -1,23 +1,52 @@
-# Usa una imagen oficial de Node.js como base
-FROM node:16
+# ====== Stage 1: Build (compila TypeScript) ======
+FROM node:20-alpine AS builder
 
-# Establece el directorio de trabajo en el contenedor
-WORKDIR /usr/src/app
+# Variables de entorno para mejorar rendimiento de npm
+ENV NODE_ENV=development \
+    NPM_CONFIG_UPDATE_NOTIFIER=false \
+    CI=true
 
-# Copia los archivos package.json y package-lock.json (si existe)
+# Directorio de trabajo
+WORKDIR /app
+
+# Copiamos manifiestos primero para aprovechar cache
 COPY package*.json ./
 
-# Instala las dependencias de Node.js
-RUN npm install
+# Instala TODAS las dependencias (incluye dev) para compilar
+RUN npm ci
 
-# Copia todo el proyecto al contenedor
+# Copiamos el resto del código (incluye .ts)
 COPY . .
 
-# Compila el código TypeScript a JavaScript
-RUN npm run build
+# Compilar a dist/
+RUN npx tsc
 
-# Expone el puerto que usará la API
+# Opcional: quitar devDependencies para reducir tamaño
+RUN npm prune --omit=dev
+
+
+# ====== Stage 2: Runtime (sólo lo necesario para correr) ======
+FROM node:20-alpine AS runtime
+
+ENV NODE_ENV=production \
+    PORT=3003
+
+WORKDIR /app
+
+# Copiamos sólo lo mínimo desde el builder:
+#  - node_modules ya sin devDeps
+#  - package.json (útil para inspección)
+#  - código compilado en dist/
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/dist ./dist
+
+# Seguridad básica: usar usuario no root
+USER node
+
+# Expone el puerto de la app
 EXPOSE 3003
 
-# Comando para ejecutar la API
-CMD ["npm", "start"]
+# Ejecuta la app compilada
+CMD ["node", "dist/index.js"]
+
